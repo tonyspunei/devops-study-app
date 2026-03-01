@@ -1,0 +1,45 @@
+#!/bin/bash
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
+git config --global push.autoSetupRemote true
+
+# Only needed in containers where git complains about ownership
+if [ "$DEVPOD" = "true" ]; then
+  git config --global --add safe.directory "$PROJECT_ROOT"
+fi
+
+if ! command -v cz >/dev/null; then
+  if ! command -v pipx >/dev/null; then
+    echo "Error: pipx is not installed."
+    echo ""
+    echo "Install it first:"
+    case "$(uname -s)" in
+      Darwin)
+        echo "  brew install pipx && pipx ensurepath"
+        ;;
+      Linux)
+        if command -v apt >/dev/null; then
+          echo "  sudo apt install pipx && pipx ensurepath"
+        elif command -v dnf >/dev/null; then
+          echo "  sudo dnf install pipx && pipx ensurepath"
+        else
+          echo "  pip install --user pipx && pipx ensurepath"
+        fi
+        ;;
+      *)
+        echo "  pip install --user pipx && pipx ensurepath"
+        ;;
+    esac
+    exit 1
+  fi
+
+  pipx install commitizen
+fi
+
+if [ ! -f "$PROJECT_ROOT/.git/hooks/pre-commit" ]; then
+  pre-commit install
+  pre-commit install --hook-type commit-msg
+fi
