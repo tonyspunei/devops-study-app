@@ -1,1 +1,8 @@
-echo "Hello World"
+#!/bin/bash
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
+mise trust "$PROJECT_ROOT/mise.toml"
+mise install
