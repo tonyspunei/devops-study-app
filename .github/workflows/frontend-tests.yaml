@@ -1,4 +1,4 @@
-name: Backend Tests
+name: Frontend Tests
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      should_run: ${{ steps.filter.outputs.backend }}
+      should_run: ${{ steps.filter.outputs.frontend }}
       
     steps:
       - uses: actions/checkout@v4
@@ -16,18 +16,18 @@ jobs:
         id: filter
         with:
           filters: |
-            backend:
-              - 'src/backend/**'
-              - '.github/workflows/backend-tests.yaml'
+            frontend:
+              - 'src/frontend/**'
+              - '.github/workflows/frontend-tests.yaml'
 
   test:
-    name: Test Backend
+    name: Test Frontend
     needs: check_paths
     if: ${{ needs.check_paths.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./src/backend
+        working-directory: ./src/frontend
 
     steps:
       - name: Checkout code
@@ -50,20 +50,20 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          uv run pytest tests/ -v --cov=src/backend --cov-report=xml --cov-fail-under=80
+          uv run pytest tests/ -v --cov=src/frontend --cov-report=xml --cov-fail-under=80
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
-          name: backend-coverage-report
-          path: ./src/backend/coverage.xml
+          name: frontend-coverage-report
+          path: ./src/frontend/coverage.xml
           retention-days: 7
         if: ${{ always() }}
 
       - name: Coverage Report
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: ./src/backend/coverage.xml
+          filename: ./src/frontend/coverage.xml
           badge: true
           format: markdown
           output: both
@@ -72,22 +72,19 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         if: github.event_name == 'pull_request'
         with:
-          header: backend-test-coverage
+          header: frontend-test-coverage
           recreate: true
           path: code-coverage-results.md
 
       - name: Build an image from Dockerfile
-        run: docker build -t backend-app:latest .
-  
+        run: docker build -t frontend-app:latest .
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.35.0
         with:
-          image-ref: "backend-app:latest"
+          image-ref: "frontend-app:latest"
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
-  
-
-      

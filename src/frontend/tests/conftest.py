@@ -1,0 +1,35 @@
+import pytest
+from contextlib import contextmanager
+from flask import template_rendered
+
+from frontend.main import app
+
+
+@pytest.fixture
+def captured_templates():
+    """Context manager to track templates rendered by the Flask app.
+    Allows test to assert on which templates were rendered and their contexts.
+    """
+
+    @contextmanager
+    def _captured(target_app):
+        recorded = []
+
+        def record(sender, template, context, **kwargs):
+            recorded.append((template, context))
+
+        template_rendered.connect(record, target_app)
+        try:
+            yield recorded
+        finally:
+            template_rendered.disconnect(record, target_app)
+
+    return _captured
+
+
+@pytest.fixture
+def client():
+    """Test client for the Flask application"""
+    app.config["TESTING"] = True
+    with app.test_client() as client:
+        yield client
