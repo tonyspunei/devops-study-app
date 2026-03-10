@@ -156,7 +156,8 @@ async def test_read_stats(client: AsyncClient):
     data = response.json()
     assert data["total_sessions"] == 3
     assert data["total_time"] == 90  # 25 + 50 + 15
-    assert "time_by_tag" in data
+    assert data["time_by_tag"]["Kubernetes"] == 40  # 25 + 15
+    assert data["time_by_tag"]["AWS"] == 50
     assert data["sessions_by_tag"]["Kubernetes"] == 2
     assert data["sessions_by_tag"]["AWS"] == 1
 
