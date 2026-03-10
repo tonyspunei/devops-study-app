@@ -20,18 +20,20 @@ TEST_DATA_FILE = os.path.join(os.path.dirname(__file__), "test_sessions.csv")
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_environment():
     """Fixture to set up the test environment before any tests run."""
-    # Ensure the test data directory exists
+    original_sessions_file = storage_module.SESSIONS_FILE
+
     os.makedirs(os.path.dirname(TEST_DATA_FILE), exist_ok=True)
 
-    # Ensure the test data file does not exist before tests
     if os.path.exists(TEST_DATA_FILE):
         os.remove(TEST_DATA_FILE)
-    # Override the SESSIONS_FILE path in the storage module for testing
-    storage_module.SESSIONS_FILE = TEST_DATA_FILE  # Use the imported module alias
+
+    storage_module.SESSIONS_FILE = TEST_DATA_FILE
     yield
-    # Clean up the test data file after all tests run
+
     if os.path.exists(TEST_DATA_FILE):
         os.remove(TEST_DATA_FILE)
+
+    storage_module.SESSIONS_FILE = original_sessions_file
 
 
 @pytest_asyncio.fixture(scope="function")
