@@ -1,8 +1,5 @@
 FROM python:3.13-alpine AS builder
 
-# Update packages before installing dependencies to ensure ABI parity with final stage
-RUN apk update && apk upgrade --no-cache
-
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
@@ -20,9 +17,12 @@ COPY . /app
 
 # Sync the project and install it, now that we have access to the source code
 RUN --mount=type=cache,target=/root/.cache/uv \
-  uv sync --locked --no-editable
+  uv sync --locked --no-editable --no-dev
 
 FROM python:3.13-alpine
+
+# Update packages
+RUN apk update && apk upgrade --no-cache
 
 # Create a non-root user and group with specific IDs
 RUN addgroup -S -g 1000 app && adduser -S -u 1000 -G app app
