@@ -75,16 +75,17 @@ jobs:
       - name: Install k3d
         uses: rinx/setup-k3d@v0.0.2
 
+      - name: Override KUBECONFIG
+        run: |
+          mkdir -p ${{ github.workspace }}/.kube
+          echo "KUBECONFIG=${{ github.workspace }}/.kube/config" >> $GITHUB_ENV
+
       - name: Set up Python 3.13
         run: uv python install 3.13
 
       - name: Install dependencies
         run: |
           uv sync --locked --dev
-
-      - name: Setup kubeconfig directory
-        run: |
-          mkdir -p ${{ github.workspace }}/.kube
 
       - name: Lint with Ruff
         run: |
