@@ -71,6 +71,7 @@ jobs:
         uses: AbsaOSS/k3d-action@v2
         with:
           cluster-name: study-app-cluster
+          k3d-version: v5.7.4
           args: --config=./kubernetes/k3d-config.yaml
 
       - name: Set up Python 3.13
