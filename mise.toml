@@ -1,4 +1,5 @@
 [tools]
+k3d = "latest"
 pre-commit = "latest"
 python = "3.13"
 ruff = "latest"
