@@ -56,8 +56,6 @@ jobs:
     if: ${{ needs.check_paths.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      KUBECONFIG: ${{ github.workspace }}/.kube/config
     defaults:
       run:
         working-directory: ./kubernetes
@@ -69,16 +67,11 @@ jobs:
       - name: Install UV
         uses: astral-sh/setup-uv@v5
 
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v4
-
-      - name: Install k3d
-        uses: rinx/setup-k3d@v0.0.2
-
-      - name: Override KUBECONFIG
-        run: |
-          mkdir -p ${{ github.workspace }}/.kube
-          echo "KUBECONFIG=${{ github.workspace }}/.kube/config" >> $GITHUB_ENV
+      - name: Create k3d cluster
+        uses: AbsaOSS/k3d-action@v2
+        with:
+          cluster-name: study-app-cluster
+          args: --config=./kubernetes/k3d-config.yaml
 
       - name: Set up Python 3.13
         run: uv python install 3.13
@@ -94,7 +87,7 @@ jobs:
 
       - name: Run E2E tests
         run: |
-          uv run e2e_test.py
+          uv run e2e_test.py --skip-cluster-creation
 
       - name: Cleanup k3d cluster
         if: always()
