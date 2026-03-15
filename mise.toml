@@ -1,4 +1,5 @@
 [tools]
+flux2 = "latest"
 gh = "latest"
 k3d = "latest"
 pre-commit = "latest"
@@ -36,3 +37,6 @@ run = "cd ./kubernetes && uv run e2e_test.py"
 description = "Set up a deploy key for the GitOps repo"
 run = "bash ./scripts/setup_deploy_key"
 
+[tasks.k8s-setup-gitops]
+description = "Set up a cluster configured with GitOps using Flux"
+run = "bash ./kubernetes/setup_cluster_gitops"
