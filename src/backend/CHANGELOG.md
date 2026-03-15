@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/tonyspunei/devops-study-app/compare/backend-v0.2.0...backend-v0.2.1) (2026-03-15)
+
+
+### Bug Fixes
+
+* **backend:** trigger CI ([f81597e](https://github.com/tonyspunei/devops-study-app/commit/f81597e66a67184ce177107cfab34a992b411863))
+
 ## [0.2.0](https://github.com/tonyspunei/devops-study-app/compare/backend-v0.1.0...backend-v0.2.0) (2026-03-11)
 
 
