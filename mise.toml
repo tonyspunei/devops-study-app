@@ -1,4 +1,5 @@
 [tools]
+gh = "latest"
 k3d = "latest"
 pre-commit = "latest"
 python = "3.13"
@@ -13,6 +14,7 @@ experimental = true
 
 [env]
 APP_REPO = 'devops-study-app'
+GITUSER = 'tonyspunei'
 GITOPS_REPO = 'devops-study-app-gitops'
 
 [hooks]
@@ -29,3 +31,8 @@ run = "bash ./kubernetes/k8s-setup-minimal"
 [tasks.e2e-test]
 description = "Run end-to-end tests"
 run = "cd ./kubernetes && uv run e2e_test.py"
+
+[tasks.setup-deploy-key]
+description = "Set up a deploy key for the GitOps repo"
+run = "bash ./scripts/setup_deploy_key"
+
