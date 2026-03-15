@@ -1,0 +1,37 @@
+name: E2E Tests
+
+on:
+  workflow_call:
+
+jobs:
+  e2e_test:
+    name: End-to-End Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./kubernetes
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install K3d
+        uses: nolar/setup-k3d-k3s@v1
+        with:
+          version: "latest"
+          skip-creation: true
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: "latest"
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python 3.13
+        run: uv python install 3.13
+
+      - name: Run E2E tests
+        run: |
+          uv run e2e_test.py

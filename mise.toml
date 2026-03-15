@@ -1,4 +1,7 @@
 [tools]
+flux2 = "latest"
+gh = "latest"
+k3d = "latest"
 pre-commit = "latest"
 python = "3.13"
 ruff = "latest"
@@ -12,7 +15,28 @@ experimental = true
 
 [env]
 APP_REPO = 'devops-study-app'
+GITUSER = 'tonyspunei'
 GITOPS_REPO = 'devops-study-app-gitops'
 
 [hooks]
 enter = "bash ./scripts/setup_project"
+
+[tasks.k8s-setup-local]
+description = "Set up a Kubernetes cluster that builds the local images and applies them"
+run = "bash ./kubernetes/setup_cluster_local"
+
+[tasks.k8s-setup-minimal]
+description = "Set up a minimal Kubernetes cluster"
+run = "bash ./kubernetes/k8s-setup-minimal"
+
+[tasks.e2e-test]
+description = "Run end-to-end tests"
+run = "cd ./kubernetes && uv run e2e_test.py"
+
+[tasks.setup-deploy-key]
+description = "Set up a deploy key for the GitOps repo"
+run = "bash ./scripts/setup_deploy_key"
+
+[tasks.k8s-setup-gitops]
+description = "Set up a cluster configured with GitOps using Flux"
+run = "bash ./kubernetes/setup_cluster_gitops"
